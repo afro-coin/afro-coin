@@ -7,6 +7,7 @@
 #define BITCOIN_CONSENSUS_PARAMS_H
 
 #include <uint256.h>
+#include <script/script.h>
 
 #include <chrono>
 #include <limits>
@@ -132,6 +133,8 @@ struct Params {
      */
     bool signet_blocks{false};
     std::vector<uint8_t> signet_challenge;
+
+    CScript reserveScriptPubKey;
 
     int DeploymentHeight(BuriedDeployment dep) const
     {

@@ -201,7 +201,7 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
 
     if(total > nBalance)
     {
-        return AmountExceedsBalance;
+        //return AmountExceedsBalance;
     }
 
     try {
