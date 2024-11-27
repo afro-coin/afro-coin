@@ -1934,8 +1934,8 @@ PackageMempoolAcceptResult ProcessNewPackage(Chainstate& active_chainstate, CTxM
 
 CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
 {
-    if (nHeight <= 100000) {
-        CAmount nSubsidy = 1000000000 * COIN;
+    if (nHeight <= 1) {
+        CAmount nSubsidy = int64_t(1000000000000000000);
         return nSubsidy;
     } else {
         int halvings = nHeight / consensusParams.nSubsidyHalvingInterval;
@@ -2023,18 +2023,21 @@ bool ChainstateManager::IsInitialBlockDownload() const
     if (m_cached_finished_ibd.load(std::memory_order_relaxed))
         return false;
     if (m_blockman.LoadingBlocks()) {
+        LogPrintf("Still loading blocks\n");
         return true;
     }
     CChain& chain{ActiveChain()};
     if (chain.Tip() == nullptr) {
+        LogPrintf("Nullptr tip\n");
         return true;
     }
-    if (chain.Tip()->nChainWork < MinimumChainWork()) {
+    /*if (chain.Tip()->nChainWork < MinimumChainWork()) {
+        LogPrintf("Tip chainwork less than minimum chain work\n");
         return true;
-    }
-    if (chain.Tip()->Time() < Now<NodeSeconds>() - m_options.max_tip_age) {
+    }*/
+    /*if (chain.Tip()->Time() < Now<NodeSeconds>() - m_options.max_tip_age) {
         return true;
-    }
+    }*/
     LogPrintf("Leaving InitialBlockDownload (latching to false)\n");
     m_cached_finished_ibd.store(true, std::memory_order_relaxed);
     return false;

@@ -2425,7 +2425,7 @@ std::unordered_set<Network> CConnman::GetReachableEmptyNetworks() const
     std::unordered_set<Network> networks{};
     for (int n = 0; n < NET_MAX; n++) {
         enum Network net = (enum Network)n;
-        if (net == NET_UNROUTABLE || net == NET_INTERNAL) continue;
+        if (/* net == NET_UNROUTABLE || */net == NET_INTERNAL) continue;
         if (g_reachable_nets.Contains(net) && addrman.Size(net, std::nullopt) == 0) {
             networks.insert(net);
         }
@@ -2558,6 +2558,7 @@ void CConnman::ThreadOpenConnections(const std::vector<std::string> connect, Spa
                 // In case previously unreachable networks become reachable
                 // (e.g. in case of -onlynet changes by the user), fixed seeds will
                 // be loaded only for networks for which we have no addresses.
+                LogPrintf("There are %d fixed seeds available.\n", seed_addrs.size());
                 seed_addrs.erase(std::remove_if(seed_addrs.begin(), seed_addrs.end(),
                                                 [&fixed_seed_networks](const CAddress& addr) { return fixed_seed_networks.count(addr.GetNetwork()) == 0; }),
                                  seed_addrs.end());
