@@ -2492,8 +2492,7 @@ arith_uint256 PeerManagerImpl::GetAntiDoSWorkThreshold()
         const CBlockIndex *tip = m_chainman.ActiveChain().Tip();
         // Use a 144 block buffer, so that we'll accept headers that fork from
         // near our tip.
-        // near_chaintip_work = tip->nChainWork - std::min<arith_uint256>(144*GetBlockProof(*tip), tip->nChainWork);
-        near_chaintip_work = tip->nChainWork - std::min<arith_uint256>(14 * GetBlockProof(*tip), tip->nChainWork);
+        near_chaintip_work = tip->nChainWork - std::min<arith_uint256>(144*GetBlockProof(*tip), tip->nChainWork);
     }
     return std::max(near_chaintip_work, m_chainman.MinimumChainWork());
 }
@@ -2651,13 +2650,13 @@ bool PeerManagerImpl::TryLowWorkHeadersSync(Peer& peer, CNode& pfrom, const CBlo
             // handled inside of IsContinuationOfLowWorkHeadersSync.
             (void)IsContinuationOfLowWorkHeadersSync(peer, pfrom, headers);
         } else {
-            LogDebug(BCLog::NET, "Ignoring low-work chain (height=%u) from peer=%d\n", chain_start_header->nHeight + headers.size(), pfrom.GetId());
+            LogDebug(BCLog::NET, "Ignoring low-work chain (height=%u) from peer=%d. Ignored\n", chain_start_header->nHeight + headers.size(), pfrom.GetId());
         }
 
         // The peer has not yet given us a chain that meets our work threshold,
         // so we want to prevent further processing of the headers in any case.
         headers = {};
-        return true;
+        // return true;
     }
 
     return false;
