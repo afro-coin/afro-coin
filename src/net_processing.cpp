@@ -4176,7 +4176,7 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type, 
             pindex = m_chainman.ActiveChainstate().FindForkInGlobalIndex(locator);
             // Don't go to the next block if the anscestor is the genesis
             // This check prevents synchronization is the active chain only has the genesis block
-            if (pindex && pindex->nHeight != 0)
+            if (pindex)
                 pindex = m_chainman.ActiveChain().Next(pindex);
         }
 
