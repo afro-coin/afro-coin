@@ -145,3 +145,4 @@ cmake/tests.cmake
 .vs/afrocoin/v17/Browse.VC.db-wal
 .vs/afrocoin/v17/Browse.VC.opendb
 .vs/slnx.sqlite-journal
+/.vs
