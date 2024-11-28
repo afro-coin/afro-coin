@@ -1,15 +1,15 @@
-# bash programmable completion for bitcoind(1) and bitcoin-qt(1)
-# Copyright (c) 2012-2022 The Bitcoin Core developers
+# bash programmable completion for afrocoind(1) and afrocoin-qt(1)
+# Copyright (c) 2012-2022 The Afrocoin Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-_bitcoind() {
+_afrocoind() {
     local cur prev words=() cword
-    local bitcoind
+    local afrocoind
 
-    # save and use original argument to invoke bitcoind for -help
+    # save and use original argument to invoke afrocoind for -help
     # it might not be in $PATH
-    bitcoind="$1"
+    afrocoind="$1"
 
     COMPREPLY=()
     _get_comp_words_by_ref -n = cur prev words cword
@@ -33,7 +33,7 @@ _bitcoind() {
             # only parse -help if sensible
             if [[ -z "$cur" || "$cur" =~ ^- ]]; then
                 local helpopts
-                helpopts=$($bitcoind -help 2>&1 | awk '$1 ~ /^-/ { sub(/=.*/, "="); print $1 }' )
+                helpopts=$($afrocoind -help 2>&1 | awk '$1 ~ /^-/ { sub(/=.*/, "="); print $1 }' )
                 COMPREPLY=( $( compgen -W "$helpopts" -- "$cur" ) )
             fi
 
@@ -45,7 +45,7 @@ _bitcoind() {
             ;;
     esac
 } &&
-complete -F _bitcoind bitcoind bitcoin-qt
+complete -F _afrocoind afrocoind afrocoin-qt
 
 # Local variables:
 # mode: shell-script

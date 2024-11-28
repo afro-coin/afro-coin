@@ -1,11 +1,11 @@
 Sample configuration files for:
 ```
-systemd: bitcoind.service
-Upstart: bitcoind.conf
-OpenRC:  bitcoind.openrc
-         bitcoind.openrcconf
-CentOS:  bitcoind.init
-macOS:   org.bitcoin.bitcoind.plist
+systemd: afrocoind.service
+Upstart: afrocoind.conf
+OpenRC:  afrocoind.openrc
+         afrocoind.openrcconf
+CentOS:  afrocoind.init
+macOS:   org.afrocoin.afrocoind.plist
 ```
 have been made available to assist packagers in creating node packages here.
 

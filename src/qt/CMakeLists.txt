@@ -1,4 +1,4 @@
-# Copyright (c) 2023-present The Bitcoin Core developers
+# Copyright (c) 2023-present The Afrocoin Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or https://opensource.org/license/mit/.
 
@@ -41,28 +41,28 @@ set(CMAKE_AUTOUIC_SEARCH_PATHS forms)
 
 # TODO: The file(GLOB ...) command should be replaced with an explicit
 # file list. Such a change must be synced with the corresponding change
-# to https://github.com/bitcoin-core/bitcoin-maintainer-tools/blob/main/update-translations.py
+# to https://github.com/afrocoin-core/afrocoin-maintainer-tools/blob/main/update-translations.py
 file(GLOB ts_files RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} locale/*.ts)
 set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/locale)
 qt5_add_translation(qm_files ${ts_files})
 
-configure_file(bitcoin_locale.qrc bitcoin_locale.qrc USE_SOURCE_PERMISSIONS COPYONLY)
+configure_file(afrocoin_locale.qrc afrocoin_locale.qrc USE_SOURCE_PERMISSIONS COPYONLY)
 
-# The bitcoinqt sources have to include headers in
+# The afrocoinqt sources have to include headers in
 # order to parse them to collect translatable strings.
-add_library(bitcoinqt STATIC EXCLUDE_FROM_ALL
+add_library(afrocoinqt STATIC EXCLUDE_FROM_ALL
   bantablemodel.cpp
   bantablemodel.h
-  bitcoin.cpp
-  bitcoin.h
-  bitcoinaddressvalidator.cpp
-  bitcoinaddressvalidator.h
-  bitcoinamountfield.cpp
-  bitcoinamountfield.h
-  bitcoingui.cpp
-  bitcoingui.h
-  bitcoinunits.cpp
-  bitcoinunits.h
+  afrocoin.cpp
+  afrocoin.h
+  afrocoinaddressvalidator.cpp
+  afrocoinaddressvalidator.h
+  afrocoinamountfield.cpp
+  afrocoinamountfield.h
+  afrocoingui.cpp
+  afrocoingui.h
+  afrocoinunits.cpp
+  afrocoinunits.h
   clientmodel.cpp
   clientmodel.h
   csvmodelwriter.cpp
@@ -109,15 +109,15 @@ add_library(bitcoinqt STATIC EXCLUDE_FROM_ALL
   utilitydialog.h
   $<$<PLATFORM_ID:Windows>:winshutdownmonitor.cpp>
   $<$<PLATFORM_ID:Windows>:winshutdownmonitor.h>
-  bitcoin.qrc
-  ${CMAKE_CURRENT_BINARY_DIR}/bitcoin_locale.qrc
+  afrocoin.qrc
+  ${CMAKE_CURRENT_BINARY_DIR}/afrocoin_locale.qrc
 )
-target_compile_definitions(bitcoinqt
+target_compile_definitions(afrocoinqt
   PUBLIC
     QT_NO_KEYWORDS
     QT_USE_QSTRINGBUILDER
 )
-target_include_directories(bitcoinqt
+target_include_directories(afrocoinqt
   PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
 )
@@ -125,12 +125,12 @@ set_property(SOURCE macnotificationhandler.mm
   # Ignore warnings "'NSUserNotificationCenter' is deprecated: first deprecated in macOS 11.0".
   APPEND PROPERTY COMPILE_OPTIONS -Wno-deprecated-declarations
 )
-target_link_libraries(bitcoinqt
+target_link_libraries(afrocoinqt
   PUBLIC
     Qt5::Widgets
   PRIVATE
     core_interface
-    bitcoin_cli
+    afrocoin_cli
     leveldb
     Boost::headers
     $<TARGET_NAME_IF_EXISTS:QRencode::QRencode>
@@ -139,7 +139,7 @@ target_link_libraries(bitcoinqt
 )
 
 if(ENABLE_WALLET)
-  target_sources(bitcoinqt
+  target_sources(afrocoinqt
     PRIVATE
       addressbookpage.cpp
       addressbookpage.h
@@ -202,59 +202,59 @@ if(ENABLE_WALLET)
       walletview.cpp
       walletview.h
   )
-  target_link_libraries(bitcoinqt
+  target_link_libraries(afrocoinqt
     PRIVATE
-      bitcoin_wallet
+      afrocoin_wallet
       Qt5::Network
   )
 endif()
 
 if(WITH_DBUS)
-  target_link_libraries(bitcoinqt PRIVATE Qt5::DBus)
+  target_link_libraries(afrocoinqt PRIVATE Qt5::DBus)
 endif()
 
 if(qt_lib_type STREQUAL "STATIC_LIBRARY")
   # We want to define static plugins to link ourselves, thus preventing
   # automatic linking against a "sane" set of default static plugins.
-  qt5_import_plugins(bitcoinqt
+  qt5_import_plugins(afrocoinqt
       EXCLUDE_BY_TYPE bearer iconengines imageformats platforms styles
   )
 endif()
 
-add_executable(bitcoin-qt
+add_executable(afrocoin-qt
   main.cpp
-  ../init/bitcoin-qt.cpp
+  ../init/afrocoin-qt.cpp
 )
 
-add_windows_resources(bitcoin-qt res/bitcoin-qt-res.rc)
+add_windows_resources(afrocoin-qt res/afrocoin-qt-res.rc)
 
-target_link_libraries(bitcoin-qt
+target_link_libraries(afrocoin-qt
   core_interface
-  bitcoinqt
-  bitcoin_node
+  afrocoinqt
+  afrocoin_node
 )
 
-import_plugins(bitcoin-qt)
-set(installable_targets bitcoin-qt)
+import_plugins(afrocoin-qt)
+set(installable_targets afrocoin-qt)
 if(WIN32)
-  set_target_properties(bitcoin-qt PROPERTIES WIN32_EXECUTABLE TRUE)
+  set_target_properties(afrocoin-qt PROPERTIES WIN32_EXECUTABLE TRUE)
 endif()
 
 if(WITH_MULTIPROCESS)
-  add_executable(bitcoin-gui
+  add_executable(afrocoin-gui
     main.cpp
-    ../init/bitcoin-gui.cpp
+    ../init/afrocoin-gui.cpp
   )
-  target_link_libraries(bitcoin-gui
+  target_link_libraries(afrocoin-gui
     core_interface
-    bitcoinqt
-    bitcoin_node
-    bitcoin_ipc
+    afrocoinqt
+    afrocoin_node
+    afrocoin_ipc
   )
-  import_plugins(bitcoin-gui)
-  list(APPEND installable_targets bitcoin-gui)
+  import_plugins(afrocoin-gui)
+  list(APPEND installable_targets afrocoin-gui)
   if(WIN32)
-    set_target_properties(bitcoin-gui PROPERTIES WIN32_EXECUTABLE TRUE)
+    set_target_properties(afrocoin-gui PROPERTIES WIN32_EXECUTABLE TRUE)
   endif()
 endif()
 
@@ -319,10 +319,10 @@ else()
   file(GLOB ui_files ${CMAKE_CURRENT_SOURCE_DIR}/forms/*.ui)
   add_custom_target(translate
     COMMAND ${CMAKE_COMMAND} -E env XGETTEXT=${XGETTEXT_EXECUTABLE} COPYRIGHT_HOLDERS=${COPYRIGHT_HOLDERS} ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/share/qt/extract_strings_qt.py ${translatable_sources}
-    COMMAND Qt5::lupdate -no-obsolete -I ${PROJECT_SOURCE_DIR}/src -locations relative ${CMAKE_CURRENT_SOURCE_DIR}/bitcoinstrings.cpp ${ui_files} ${qt_translatable_sources} -ts ${CMAKE_CURRENT_SOURCE_DIR}/locale/bitcoin_en.ts
-    COMMAND Qt5::lconvert -drop-translations -o ${CMAKE_CURRENT_SOURCE_DIR}/locale/bitcoin_en.xlf -i ${CMAKE_CURRENT_SOURCE_DIR}/locale/bitcoin_en.ts
-    COMMAND ${SED_EXECUTABLE} -i.old -e "s|source-language=\"en\" target-language=\"en\"|source-language=\"en\"|" -e "/<target xml:space=\"preserve\"><\\/target>/d" ${CMAKE_CURRENT_SOURCE_DIR}/locale/bitcoin_en.xlf
-    COMMAND ${CMAKE_COMMAND} -E rm ${CMAKE_CURRENT_SOURCE_DIR}/locale/bitcoin_en.xlf.old
+    COMMAND Qt5::lupdate -no-obsolete -I ${PROJECT_SOURCE_DIR}/src -locations relative ${CMAKE_CURRENT_SOURCE_DIR}/afrocoinstrings.cpp ${ui_files} ${qt_translatable_sources} -ts ${CMAKE_CURRENT_SOURCE_DIR}/locale/afrocoin_en.ts
+    COMMAND Qt5::lconvert -drop-translations -o ${CMAKE_CURRENT_SOURCE_DIR}/locale/afrocoin_en.xlf -i ${CMAKE_CURRENT_SOURCE_DIR}/locale/afrocoin_en.ts
+    COMMAND ${SED_EXECUTABLE} -i.old -e "s|source-language=\"en\" target-language=\"en\"|source-language=\"en\"|" -e "/<target xml:space=\"preserve\"><\\/target>/d" ${CMAKE_CURRENT_SOURCE_DIR}/locale/afrocoin_en.xlf
+    COMMAND ${CMAKE_COMMAND} -E rm ${CMAKE_CURRENT_SOURCE_DIR}/locale/afrocoin_en.xlf.old
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/src
     VERBATIM
   )

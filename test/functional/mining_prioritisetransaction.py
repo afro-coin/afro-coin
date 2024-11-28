@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2015-2022 The Bitcoin Core developers
+# Copyright (c) 2015-2022 The Afrocoin Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 """Test the prioritisetransaction mining RPC."""
@@ -11,7 +11,7 @@ from test_framework.messages import (
     COIN,
     MAX_BLOCK_WEIGHT,
 )
-from test_framework.test_framework import BitcoinTestFramework
+from test_framework.test_framework import AfrocoinTestFramework
 from test_framework.util import (
     assert_equal,
     assert_raises_rpc_error,
@@ -21,7 +21,7 @@ from test_framework.util import (
 from test_framework.wallet import MiniWallet
 
 
-class PrioritiseTransactionTest(BitcoinTestFramework):
+class PrioritiseTransactionTest(AfrocoinTestFramework):
     def set_test_params(self):
         self.num_nodes = 1
         self.extra_args = [[
@@ -41,7 +41,7 @@ class PrioritiseTransactionTest(BitcoinTestFramework):
         conflicting_input = self.wallet.get_utxo()
         tx_replacee = self.wallet.create_self_transfer(utxo_to_spend=conflicting_input, fee_rate=Decimal("0.0001"))
         tx_replacement = self.wallet.create_self_transfer(utxo_to_spend=conflicting_input, fee_rate=Decimal("0.005"))
-        # Add 1 satoshi fee delta to replacee
+        # Add 1 cent fee delta to replacee
         self.nodes[0].prioritisetransaction(tx_replacee["txid"], 0, 100)
         assert_equal(self.nodes[0].getprioritisedtransactions(), { tx_replacee["txid"] : { "fee_delta" : 100, "in_mempool" : False}})
         self.nodes[0].sendrawtransaction(tx_replacee["hex"])

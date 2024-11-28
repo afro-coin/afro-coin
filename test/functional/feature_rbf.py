@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2014-2022 The Bitcoin Core developers
+# Copyright (c) 2014-2022 The Afrocoin Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 """Test the RBF code."""
@@ -10,7 +10,7 @@ from test_framework.messages import (
     MAX_BIP125_RBF_SEQUENCE,
     COIN,
 )
-from test_framework.test_framework import BitcoinTestFramework
+from test_framework.test_framework import AfrocoinTestFramework
 from test_framework.util import (
     assert_equal,
     assert_raises_rpc_error,
@@ -19,7 +19,7 @@ from test_framework.wallet import MiniWallet
 from test_framework.address import ADDRESS_BCRT1_UNSPENDABLE
 
 MAX_REPLACEMENT_LIMIT = 100
-class ReplaceByFeeTest(BitcoinTestFramework):
+class ReplaceByFeeTest(AfrocoinTestFramework):
     def add_options(self, parser):
         self.add_wallet_options(parser)
 
@@ -112,7 +112,7 @@ class ReplaceByFeeTest(BitcoinTestFramework):
         # This will raise an exception due to insufficient fee
         assert_raises_rpc_error(-26, "insufficient fee", self.nodes[0].sendrawtransaction, tx.serialize().hex(), 0)
 
-        # Extra 0.1 BTC fee
+        # Extra 0.1 AFC fee
         tx.vout[0].nValue -= int(0.1 * COIN)
         tx1b_hex = tx.serialize().hex()
         # Works when enabled
@@ -145,7 +145,7 @@ class ReplaceByFeeTest(BitcoinTestFramework):
             chain_txids.append(prevout["txid"])
 
         # Whether the double-spend is allowed is evaluated by including all
-        # child fees - 4 BTC - so this attempt is rejected.
+        # child fees - 4 AFC - so this attempt is rejected.
         dbl_tx = self.wallet.create_self_transfer(
             utxo_to_spend=tx0_outpoint,
             sequence=0,
@@ -213,7 +213,7 @@ class ReplaceByFeeTest(BitcoinTestFramework):
         # This will raise an exception due to insufficient fee
         assert_raises_rpc_error(-26, "insufficient fee", self.nodes[0].sendrawtransaction, dbl_tx_hex, 0)
 
-        # 0.1 BTC fee is enough
+        # 0.1 AFC fee is enough
         dbl_tx_hex = self.wallet.create_self_transfer(
             utxo_to_spend=tx0_outpoint,
             sequence=0,

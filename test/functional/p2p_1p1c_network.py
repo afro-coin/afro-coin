@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2024-present The Bitcoin Core developers
+# Copyright (c) 2024-present The Afrocoin Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 """
@@ -21,7 +21,7 @@ from test_framework.messages import (
 from test_framework.p2p import (
     P2PInterface,
 )
-from test_framework.test_framework import BitcoinTestFramework
+from test_framework.test_framework import AfrocoinTestFramework
 from test_framework.util import (
     assert_equal,
     assert_greater_than,
@@ -31,10 +31,10 @@ from test_framework.wallet import (
     MiniWalletMode,
 )
 
-# 1sat/vB feerate denominated in BTC/KvB
+# 1sat/vB feerate denominated in AFC/KvB
 FEERATE_1SAT_VB = Decimal("0.00001000")
 
-class PackageRelayTest(BitcoinTestFramework):
+class PackageRelayTest(AfrocoinTestFramework):
     def set_test_params(self):
         self.setup_clean_chain = True
         self.num_nodes = 4
@@ -69,7 +69,7 @@ class PackageRelayTest(BitcoinTestFramework):
             num_outputs=2,
         )
 
-        # Target 1sat/vB so the number of satoshis is equal to the vsize.
+        # Target 1sat/vB so the number of cents is equal to the vsize.
         # Round up. The goal is to be between min relay feerate and mempool min feerate.
         fee_2outs = ceil(low_fee_parent_2outs_tester["tx"].get_vsize() / 2)
 

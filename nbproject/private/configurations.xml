@@ -40,8 +40,8 @@
         <df name="debian">
         </df>
         <df name="devtools">
-          <df name="bitcoin-tidy">
-            <in>bitcoin-tidy.cpp</in>
+          <df name="afrocoin-tidy">
+            <in>afrocoin-tidy.cpp</in>
             <in>example_nontrivial-threadlocal.cpp</in>
             <in>nontrivial-threadlocal.cpp</in>
             <in>nontrivial-threadlocal.h</in>
@@ -141,7 +141,7 @@
           <in>bech32.cpp</in>
           <in>bench.cpp</in>
           <in>bench.h</in>
-          <in>bench_bitcoin.cpp</in>
+          <in>bench_afrocoin.cpp</in>
           <in>bip324_ecdh.cpp</in>
           <in>block_assemble.cpp</in>
           <in>ccoins_caching.cpp</in>
@@ -330,11 +330,11 @@
           <in>txindex.h</in>
         </df>
         <df name="init">
-          <in>bitcoin-gui.cpp</in>
-          <in>bitcoin-node.cpp</in>
-          <in>bitcoin-qt.cpp</in>
-          <in>bitcoin-wallet.cpp</in>
-          <in>bitcoind.cpp</in>
+          <in>afrocoin-gui.cpp</in>
+          <in>afrocoin-node.cpp</in>
+          <in>afrocoin-qt.cpp</in>
+          <in>afrocoin-wallet.cpp</in>
+          <in>afrocoind.cpp</in>
           <in>common.cpp</in>
           <in>common.h</in>
         </df>
@@ -367,7 +367,7 @@
           <in>protocol.h</in>
         </df>
         <df name="kernel">
-          <in>bitcoinkernel.cpp</in>
+          <in>afrocoinkernel.cpp</in>
           <in>blockmanager_opts.h</in>
           <in>chain.cpp</in>
           <in>chain.h</in>
@@ -732,17 +732,17 @@
           <in>askpassphrasedialog.h</in>
           <in>bantablemodel.cpp</in>
           <in>bantablemodel.h</in>
-          <in>bitcoin.cpp</in>
-          <in>bitcoin.h</in>
-          <in>bitcoinaddressvalidator.cpp</in>
-          <in>bitcoinaddressvalidator.h</in>
-          <in>bitcoinamountfield.cpp</in>
-          <in>bitcoinamountfield.h</in>
-          <in>bitcoingui.cpp</in>
-          <in>bitcoingui.h</in>
-          <in>bitcoinstrings.cpp</in>
-          <in>bitcoinunits.cpp</in>
-          <in>bitcoinunits.h</in>
+          <in>afrocoin.cpp</in>
+          <in>afrocoin.h</in>
+          <in>afrocoinaddressvalidator.cpp</in>
+          <in>afrocoinaddressvalidator.h</in>
+          <in>afrocoinamountfield.cpp</in>
+          <in>afrocoinamountfield.h</in>
+          <in>afrocoingui.cpp</in>
+          <in>afrocoingui.h</in>
+          <in>afrocoinstrings.cpp</in>
+          <in>afrocoinunits.cpp</in>
+          <in>afrocoinunits.h</in>
           <in>clientmodel.cpp</in>
           <in>clientmodel.h</in>
           <in>coincontroldialog.cpp</in>
@@ -992,7 +992,7 @@
               </df>
             </df>
             <df name="wycheproof">
-              <in>ecdsa_secp256k1_sha256_bitcoin_test.h</in>
+              <in>ecdsa_secp256k1_sha256_afrocoin_test.h</in>
             </df>
             <in>assumptions.h</in>
             <in>bench.c</in>
@@ -1592,12 +1592,12 @@
         <in>bech32.h</in>
         <in>bip324.cpp</in>
         <in>bip324.h</in>
-        <in>bitcoin-chainstate.cpp</in>
-        <in>bitcoin-cli.cpp</in>
-        <in>bitcoin-tx.cpp</in>
-        <in>bitcoin-util.cpp</in>
-        <in>bitcoin-wallet.cpp</in>
-        <in>bitcoind.cpp</in>
+        <in>afrocoin-chainstate.cpp</in>
+        <in>afrocoin-cli.cpp</in>
+        <in>afrocoin-tx.cpp</in>
+        <in>afrocoin-util.cpp</in>
+        <in>afrocoin-wallet.cpp</in>
+        <in>afrocoind.cpp</in>
         <in>blockencodings.cpp</in>
         <in>blockencodings.h</in>
         <in>blockfilter.cpp</in>

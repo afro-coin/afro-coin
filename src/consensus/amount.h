@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2021 The Bitcoin Core developers
+// Copyright (c) 2009-2021 The Afrocoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -8,16 +8,16 @@
 
 #include <cstdint>
 
-/** Amount in satoshis (Can be negative) */
+/** Amount in cents (Can be negative) */
 typedef int64_t CAmount;
 
-/** The amount of satoshis in one BTC. */
+/** The amount of cents in one AFC. */
 static constexpr CAmount COIN = 100;
 
-/** No amount larger than this (in satoshi) is valid.
+/** No amount larger than this (in cent) is valid.
  *
- * Note that this constant is *not* the total money supply, which in Bitcoin
- * currently happens to be less than 21,000,000 BTC for various reasons, but
+ * Note that this constant is *not* the total money supply, which in Afrocoin
+ * currently happens to be less than 21,000,000 AFC for various reasons, but
  * rather a sanity check. As this sanity check is used by consensus-critical
  * validation code, the exact value of the MAX_MONEY constant is consensus
  * critical; in unusual circumstances like a(nother) overflow bug that allowed
