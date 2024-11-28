@@ -22,9 +22,7 @@ QList<AfrocoinUnit> AfrocoinUnits::availableUnits()
 {
     QList<AfrocoinUnit> unitlist;
     unitlist.append(Unit::AFC);
-    unitlist.append(Unit::mAFC);
-    unitlist.append(Unit::uAFC);
-    unitlist.append(Unit::SAT);
+    unitlist.append(Unit::CENT);
     return unitlist;
 }
 
@@ -32,9 +30,7 @@ QString AfrocoinUnits::longName(Unit unit)
 {
     switch (unit) {
     case Unit::AFC: return QString("AFC");
-    case Unit::mAFC: return QString("mAFC");
-    case Unit::uAFC: return QString::fromUtf8("µAFC (bits)");
-    case Unit::SAT: return QString("Satoshi (sat)");
+    case Unit::CENT: return QString("cents");
     } // no default case, so the compiler can warn about missing cases
     assert(false);
 }
@@ -43,9 +39,7 @@ QString AfrocoinUnits::shortName(Unit unit)
 {
     switch (unit) {
     case Unit::AFC: return longName(unit);
-    case Unit::mAFC: return longName(unit);
-    case Unit::uAFC: return QString("bits");
-    case Unit::SAT: return QString("sat");
+    case Unit::CENT: return longName(unit);
     } // no default case, so the compiler can warn about missing cases
     assert(false);
 }
@@ -54,9 +48,7 @@ QString AfrocoinUnits::description(Unit unit)
 {
     switch (unit) {
     case Unit::AFC: return QString("Afrocoins");
-    case Unit::mAFC: return QString("Milli-Afrocoins (1 / 1" THIN_SP_UTF8 "000)");
-    case Unit::uAFC: return QString("Micro-Afrocoins (bits) (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
-    case Unit::SAT: return QString("Satoshi (sat) (1 / 100" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+    case Unit::CENT: return QString("Cents of an afrocoin");
     } // no default case, so the compiler can warn about missing cases
     assert(false);
 }
@@ -64,10 +56,8 @@ QString AfrocoinUnits::description(Unit unit)
 qint64 AfrocoinUnits::factor(Unit unit)
 {
     switch (unit) {
-    case Unit::AFC: return 100'000'000;
-    case Unit::mAFC: return 100'000;
-    case Unit::uAFC: return 100;
-    case Unit::SAT: return 1;
+    case Unit::AFC: return 100;
+    case Unit::CENT: return 1;
     } // no default case, so the compiler can warn about missing cases
     assert(false);
 }
@@ -75,10 +65,8 @@ qint64 AfrocoinUnits::factor(Unit unit)
 int AfrocoinUnits::decimals(Unit unit)
 {
     switch (unit) {
-    case Unit::AFC: return 8;
-    case Unit::mAFC: return 5;
-    case Unit::uAFC: return 2;
-    case Unit::SAT: return 0;
+    case Unit::AFC: return 2;
+    case Unit::CENT: return 0;
     } // no default case, so the compiler can warn about missing cases
     assert(false);
 }
@@ -233,9 +221,7 @@ qint8 ToQint8(AfrocoinUnit unit)
 {
     switch (unit) {
     case AfrocoinUnit::AFC: return 0;
-    case AfrocoinUnit::mAFC: return 1;
-    case AfrocoinUnit::uAFC: return 2;
-    case AfrocoinUnit::SAT: return 3;
+    case AfrocoinUnit::CENT: return 1;
     } // no default case, so the compiler can warn about missing cases
     assert(false);
 }
@@ -244,9 +230,7 @@ AfrocoinUnit FromQint8(qint8 num)
 {
     switch (num) {
     case 0: return AfrocoinUnit::AFC;
-    case 1: return AfrocoinUnit::mAFC;
-    case 2: return AfrocoinUnit::uAFC;
-    case 3: return AfrocoinUnit::SAT;
+    case 1: return AfrocoinUnit::CENT;
     }
     assert(false);
 }

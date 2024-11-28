@@ -41,9 +41,7 @@ public:
      */
     enum class Unit {
         AFC,
-        mAFC,
-        uAFC,
-        SAT
+        CENT
     };
     Q_ENUM(Unit)
 
