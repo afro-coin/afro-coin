@@ -113,7 +113,7 @@ public:
 
         // Deployment of Taproot (BIPs 340-342)
         consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].bit = 2;
-        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nStartTime = 1732942800; // November 30, 2024
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nStartTime = 1732856400; // November 29, 2024
         consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nTimeout = 1735534800;   // December 30, 2024
         consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].min_activation_height = 800; 
 
