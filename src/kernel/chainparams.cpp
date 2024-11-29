@@ -113,8 +113,8 @@ public:
 
         // Deployment of Taproot (BIPs 340-342)
         consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].bit = 2;
-        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nStartTime = 1735707600;   // January 1, 2025
-        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nTimeout = 1738299600;     // January 31, 2025
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nStartTime = 1767243600; // January 1, 2025
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nTimeout = 1769835600;   // January 31, 2025
         consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].min_activation_height = 709632; 
 
         consensus.nMinimumChainWork = uint256{"000000000000000000000000000000000000000088e186b70e0862c193ec44d6"};
