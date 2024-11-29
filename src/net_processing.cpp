@@ -70,9 +70,9 @@ static constexpr auto HEADERS_RESPONSE_TIME{2min};
  */
 static constexpr int32_t MAX_OUTBOUND_PEERS_TO_PROTECT_FROM_DISCONNECT = 4;
 /** Timeout for (unprotected) outbound peers to sync to our chainwork */
-static constexpr auto CHAIN_SYNC_TIMEOUT{2min};
+static constexpr auto CHAIN_SYNC_TIMEOUT{20min};
 /** How frequently to check for stale tips */
-static constexpr auto STALE_CHECK_INTERVAL{1min};
+static constexpr auto STALE_CHECK_INTERVAL{10min};
 /** How frequently to check for extra outbound peers and disconnect */
 static constexpr auto EXTRA_PEER_CHECK_INTERVAL{45s};
 /** Minimum time an outbound-peer-eviction candidate must be connected for, in order to evict */
@@ -94,7 +94,7 @@ static const unsigned int MAX_INV_SZ = 50000;
 /** Limit to avoid sending big packets. Not used in processing incoming GETDATA for compatibility */
 static const unsigned int MAX_GETDATA_SZ = 1000;
 /** Number of blocks that can be requested at any given time from a single peer. */
-static const int MAX_BLOCKS_IN_TRANSIT_PER_PEER = 100;
+static const int MAX_BLOCKS_IN_TRANSIT_PER_PEER = 16;
 /** Default time during which a peer must stall block download progress before being disconnected.
  * the actual timeout is increased temporarily if peers are disconnected for hitting the timeout */
 static constexpr auto BLOCK_STALLING_TIMEOUT_DEFAULT{2s};
@@ -1292,8 +1292,7 @@ int64_t PeerManagerImpl::ApproximateBestBlockDepth() const
 
 bool PeerManagerImpl::CanDirectFetch()
 {
-    // return m_chainman.ActiveChain().Tip()->Time() > NodeClock::now() - m_chainparams.GetConsensus().PowTargetSpacing() * 20;
-    return true;
+    return m_chainman.ActiveChain().Tip()->Time() > NodeClock::now() - m_chainparams.GetConsensus().PowTargetSpacing() * 20;
 }
 
 static bool PeerHasHeader(CNodeState *state, const CBlockIndex *pindex) EXCLUSIVE_LOCKS_REQUIRED(cs_main)
@@ -2235,24 +2234,24 @@ void PeerManagerImpl::ProcessGetBlockData(CNode& pfrom, Peer& peer, const CInv& 
             return;
         }
         // disconnect node in case we have reached the outbound limit for serving historical blocks
-        //if (m_connman.OutboundTargetReached(true) &&
-        //    (((m_chainman.m_best_header != nullptr) && (m_chainman.m_best_header->GetBlockTime() - pindex->GetBlockTime() > HISTORICAL_BLOCK_AGE)) || inv.IsMsgFilteredBlk()) &&
-        //    !pfrom.HasPermission(NetPermissionFlags::Download) // nodes with the download permission may exceed target
-        //) {
-        //    LogDebug(BCLog::NET, "historical block serving limit reached, disconnect peer=%d\n", pfrom.GetId());
-        //    pfrom.fDisconnect = true;
-        //    return;
-        //}
-        //tip = m_chainman.ActiveChain().Tip();
+        if (m_connman.OutboundTargetReached(true) &&
+            (((m_chainman.m_best_header != nullptr) && (m_chainman.m_best_header->GetBlockTime() - pindex->GetBlockTime() > HISTORICAL_BLOCK_AGE)) || inv.IsMsgFilteredBlk()) &&
+            !pfrom.HasPermission(NetPermissionFlags::Download) // nodes with the download permission may exceed target
+        ) {
+            LogDebug(BCLog::NET, "historical block serving limit reached, disconnect peer=%d\n", pfrom.GetId());
+            pfrom.fDisconnect = true;
+            return;
+        }
+        tip = m_chainman.ActiveChain().Tip();
         // Avoid leaking prune-height by never sending blocks below the NODE_NETWORK_LIMITED threshold
-        //if (!pfrom.HasPermission(NetPermissionFlags::NoBan) && (
-        //        (((peer.m_our_services & NODE_NETWORK_LIMITED) == NODE_NETWORK_LIMITED) && ((peer.m_our_services & NODE_NETWORK) != NODE_NETWORK) && (tip->nHeight - pindex->nHeight > (int)NODE_NETWORK_LIMITED_MIN_BLOCKS + 2 /* add two blocks buffer extension for possible races */) )
-        //   )) {
-        //    LogDebug(BCLog::NET, "Ignore block request below NODE_NETWORK_LIMITED threshold, disconnect peer=%d\n", pfrom.GetId());
-        //    //disconnect node and prevent it from stalling (would otherwise wait for the missing block)
-        //    pfrom.fDisconnect = true;
-        //    return;
-        //}
+        if (!pfrom.HasPermission(NetPermissionFlags::NoBan) && (
+                (((peer.m_our_services & NODE_NETWORK_LIMITED) == NODE_NETWORK_LIMITED) && ((peer.m_our_services & NODE_NETWORK) != NODE_NETWORK) && (tip->nHeight - pindex->nHeight > (int)NODE_NETWORK_LIMITED_MIN_BLOCKS + 2 /* add two blocks buffer extension for possible races */) )
+           )) {
+            LogDebug(BCLog::NET, "Ignore block request below NODE_NETWORK_LIMITED threshold, disconnect peer=%d\n", pfrom.GetId());
+            //disconnect node and prevent it from stalling (would otherwise wait for the missing block)
+            pfrom.fDisconnect = true;
+            return;
+        }
         // Pruned nodes may have deleted the block, so check whether
         // it's available before trying to send.
         if (!(pindex->nStatus & BLOCK_HAVE_DATA)) {
@@ -2650,13 +2649,13 @@ bool PeerManagerImpl::TryLowWorkHeadersSync(Peer& peer, CNode& pfrom, const CBlo
             // handled inside of IsContinuationOfLowWorkHeadersSync.
             (void)IsContinuationOfLowWorkHeadersSync(peer, pfrom, headers);
         } else {
-            LogDebug(BCLog::NET, "Ignoring low-work chain (height=%u) from peer=%d. Ignored\n", chain_start_header->nHeight + headers.size(), pfrom.GetId());
+            LogDebug(BCLog::NET, "Ignoring low-work chain (height=%u) from peer=%d\n", chain_start_header->nHeight + headers.size(), pfrom.GetId());
         }
 
         // The peer has not yet given us a chain that meets our work threshold,
         // so we want to prevent further processing of the headers in any case.
-        // headers = {};
-        // return true;
+        headers = {};
+        return true;
     }
 
     return false;
@@ -4147,8 +4146,8 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type, 
         // being fed a bogus chain when we started up for the first time and
         // getting partitioned off the honest network for serving that chain to
         // others.
-        if (m_chainman.ActiveTip() == nullptr /*||
-            ( m_chainman.ActiveTip()->nChainWork < m_chainman.MinimumChainWork() && !pfrom.HasPermission(NetPermissionFlags::Download))*/) {
+        if (m_chainman.ActiveTip() == nullptr ||
+            ( m_chainman.ActiveTip()->nChainWork < m_chainman.MinimumChainWork() && !pfrom.HasPermission(NetPermissionFlags::Download))) {
             LogDebug(BCLog::NET, "Ignoring getheaders from peer=%d because active chain has too little work; sending empty response\n", pfrom.GetId());
             // Just respond with an empty headers message, to tell the peer to
             // go away but not treat us as unresponsive.
@@ -4175,8 +4174,6 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type, 
         {
             // Find the last block the caller has in the main chain
             pindex = m_chainman.ActiveChainstate().FindForkInGlobalIndex(locator);
-            // Don't go to the next block if the anscestor is the genesis
-            // This check prevents synchronization is the active chain only has the genesis block
             if (pindex)
                 pindex = m_chainman.ActiveChain().Next(pindex);
         }
@@ -4305,8 +4302,8 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type, 
             return;
         } else if (prev_block->nChainWork + CalculateClaimedHeadersWork({{cmpctblock.header}}) < GetAntiDoSWorkThreshold()) {
             // If we get a low-work header in a compact block, we can ignore it.
-            LogDebug(BCLog::NET, "Ignoring low-work compact block from peer %d (Ignored)\n", pfrom.GetId());
-            // return;
+            LogDebug(BCLog::NET, "Ignoring low-work compact block from peer %d\n", pfrom.GetId());
+            return;
         }
 
         if (!m_chainman.m_blockman.LookupBlockIndex(blockhash)) {
@@ -4624,7 +4621,7 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type, 
                 min_pow_checked = true;
             }
         }
-        ProcessBlock(pfrom, pblock, forceProcessing, /*min_pow_checked*/true);
+        ProcessBlock(pfrom, pblock, forceProcessing, min_pow_checked);
         return;
     }
 
@@ -5045,9 +5042,9 @@ void PeerManagerImpl::ConsiderEviction(CNode& pto, Peer& peer, std::chrono::seco
             // message to give the peer a chance to update us.
             if (state.m_chain_sync.m_sent_getheaders) {
                 // They've run out of time to catch up!
-                // LogPrintf("Disconnecting outbound peer %d for old chain, best known block = %s\n", pto.GetId(), state.pindexBestKnownBlock != nullptr ? state.pindexBestKnownBlock->GetBlockHash().ToString() : "<none>");
-                // pto.fDisconnect = true;
-                // LogPrintf("Disconnecting outbound peer %d for old chain, ignored", pto.GetId());
+                LogPrintf("Disconnecting outbound peer %d for old chain, best known block = %s\n", pto.GetId(), state.pindexBestKnownBlock != nullptr ? state.pindexBestKnownBlock->GetBlockHash().ToString() : "<none>");
+                pto.fDisconnect = true;
+                LogPrintf("Disconnecting outbound peer %d for old chain, ignored", pto.GetId());
             } else {
                 assert(state.m_chain_sync.m_work_header);
                 // Here, we assume that the getheaders message goes out,
@@ -5184,7 +5181,7 @@ void PeerManagerImpl::CheckForStaleTipAndEvictPeers()
 
     auto now{GetTime<std::chrono::seconds>()};
 
-    /*
+    
     EvictExtraOutboundPeers(now);
 
     if (now > m_stale_tip_check_time) {
@@ -5199,10 +5196,10 @@ void PeerManagerImpl::CheckForStaleTipAndEvictPeers()
         }
         m_stale_tip_check_time = now + STALE_CHECK_INTERVAL;
     }
-    */
+    
 
     if (!m_initial_sync_finished && CanDirectFetch()) {
-        LogPrintf("Potential stale tip detected, ignored");
+        LogPrintf("Potential stale tip detected");
         m_connman.StartExtraBlockRelayPeers();
         m_initial_sync_finished = true;
     }

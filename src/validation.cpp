@@ -2028,13 +2028,13 @@ bool ChainstateManager::IsInitialBlockDownload() const
         LogPrintf("Nullptr tip\n");
         return true;
     }
-    /*if (chain.Tip()->nChainWork < MinimumChainWork()) {
+    if (chain.Tip()->nChainWork < MinimumChainWork()) {
         LogPrintf("Tip chainwork less than minimum chain work\n");
         return true;
-    }*/
-    /*if (chain.Tip()->Time() < Now<NodeSeconds>() - m_options.max_tip_age) {
+    }
+    if (chain.Tip()->Time() < Now<NodeSeconds>() - m_options.max_tip_age) {
         return true;
-    }*/
+    }
     LogPrintf("Leaving InitialBlockDownload (latching to false)\n");
     m_cached_finished_ibd.store(true, std::memory_order_relaxed);
     return false;
@@ -2643,8 +2643,6 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
 
         nInputs += tx.vin.size();
 
-         bool fCacheResults = fJustCheck;
-
         if (!tx.IsCoinBase())
         {
             CAmount txfee = 0;
@@ -2689,7 +2687,7 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
         if (!tx.IsCoinBase())
         {
             std::vector<CScriptCheck> vChecks;
-            // bool fCacheResults = fJustCheck; /* Don't cache results if we're actually connecting blocks (still consult the cache, though) */
+            bool fCacheResults = fJustCheck; /* Don't cache results if we're actually connecting blocks (still consult the cache, though) */
             TxValidationState tx_state;
             if (fScriptChecks && !CheckInputScripts(tx, tx_state, view, flags, fCacheResults, fCacheResults, txsdata[i], m_chainman.m_validation_cache, parallel_script_checks ? &vChecks : nullptr)) {
                 // Any transaction validation failure in ConnectBlock is a block consensus failure
