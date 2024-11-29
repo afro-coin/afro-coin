@@ -99,7 +99,7 @@ struct Params {
      * This prevents us from warning about the CSV and segwit activations. */
     int MinBIP9WarningHeight;
     /**
-     * Minimum blocks including miner confirmation of the total of 2016 blocks in a retargeting period,
+     * Minimum blocks including miner confirmation of the total of 20160 blocks in a retargeting period,
      * (nPowTargetTimespan / nPowTargetSpacing) which is also used for BIP9 deployments.
      * Examples: 1916 for 95%, 1512 for testchains.
      */
@@ -133,8 +133,6 @@ struct Params {
      */
     bool signet_blocks{false};
     std::vector<uint8_t> signet_challenge;
-
-    CScript reserveScriptPubKey;
 
     int DeploymentHeight(BuriedDeployment dep) const
     {

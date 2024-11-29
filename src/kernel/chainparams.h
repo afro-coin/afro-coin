@@ -24,8 +24,6 @@
 #include <utility>
 #include <vector>
 
-const std::string RESERVE_ADDRESS = "bc1qj835xhpy8enfkn4hrcvvhyfpfztzu9wqkr8z6e";
-
 typedef std::map<int, uint256> MapCheckpoints;
 
 struct CCheckpointData {
