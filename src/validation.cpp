@@ -1938,11 +1938,11 @@ CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
         CAmount nSubsidy = int64_t(1000000000000000000);
         return nSubsidy;
     } else {
-        int doublings = nHeight / consensusParams.nSubsidyDoublingInterval;
+        int doublings = (nHeight / consensusParams.nSubsidyDoublingInterval) + 1;
 
         CAmount nSubsidy = 50 * COIN;
-        // Subsidy is doubled every 2,100,000 blocks which will occur approximately every 4 years.
-        nSubsidy <<= doublings;
+        // Subsidy is multiplied every 2,100,000 blocks which will occur approximately every 4 years.
+        nSubsidy *= doublings;
         return nSubsidy;
     }
 }
